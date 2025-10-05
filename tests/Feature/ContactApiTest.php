@@ -22,13 +22,21 @@ class ContactApiTest extends TestCase
         return $user;
     }
 
+    // public function test_requires_auth(): void
+    // {
+    //     // No Sanctum::actingAs() here — intentionally unauthenticated
+    //     $this->get('/api/contacts')->assertUnauthorized();
+    //     $this->post('/api/contacts', [])->assertUnauthorized();
+    //     $this->patch('/api/contacts/anything', [])->assertUnauthorized();
+    //     $this->delete('/api/contacts/anything')->assertUnauthorized();
+    // }
     public function test_requires_auth(): void
     {
-        // No Sanctum::actingAs() here — intentionally unauthenticated
-        $this->get('/api/contacts')->assertUnauthorized();
-        $this->post('/api/contacts', [])->assertUnauthorized();
-        $this->patch('/api/contacts/anything', [])->assertUnauthorized();
-        $this->delete('/api/contacts/anything')->assertUnauthorized();
+        // Use JSON variants so Laravel returns 401 instead of redirecting to "login"
+        $this->getJson('/api/contacts')->assertUnauthorized();
+        $this->postJson('/api/contacts', [])->assertUnauthorized();
+        $this->patchJson('/api/contacts/anything', [])->assertUnauthorized();
+        $this->deleteJson('/api/contacts/anything')->assertUnauthorized();
     }
 
     public function test_lists_only_my_contacts(): void
@@ -134,6 +142,7 @@ class ContactApiTest extends TestCase
 
         $this->assertSoftDeleted('contacts', ['id' => $c->id]);
     }
+
 
     public function test_blocks_access_to_others_contacts(): void
     {
